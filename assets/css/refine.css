@@ -1,0 +1,740 @@
+/*
+  Refinements on top of site.css. Loaded after it; nothing in site.css is
+  edited, so every change here can be reviewed (or dropped) on its own.
+
+  1. A real typeface for UI text instead of the system sans
+  2. Paper, not pastel: the colour blobs go, the sea chart carries the page
+  3. Glass only on things that float (top bar, intro card)
+  4. Small details: section numbers, labels, the news rail
+  5. Styles for the three new figures: the responsible-sprint diagram,
+     the HRMS lifecycle strip and the career map (drawn by refine.js)
+*/
+
+/* ------------------------------------------------------------------ */
+/* 1. Type                                                             */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --paper: #fbfaf6;
+  --paper-edge: rgba(21, 24, 28, 0.11);
+  --paper-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 1px 2px rgba(20, 32, 48, 0.05), 0 12px 24px -18px rgba(20, 32, 48, 0.28);
+  --chart-ink: #1a5a84;
+  --sea-lines: 0.075;
+  /* CV categories: one hue each, checked for colour-blind separation in
+     light and dark (reused by the bars map, the git branches and the CV headings) */
+  --cv-positions: #1f5aa0;
+  --cv-education: #169c8c;
+  --cv-teaching: #b87a00;
+  --cv-service: #c4364a;
+  --cv-culture: #a86ad0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #13171d;
+    --paper-edge: rgba(237, 240, 243, 0.09);
+    --paper-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 24px -18px rgba(0, 0, 0, 0.8);
+    --chart-ink: #86c2e6;
+    --sea-lines: 0.09;
+    --cv-positions: #2e69b2;
+    --cv-education: #00a692;
+    --cv-teaching: #c28621;
+    --cv-service: #d24c50;
+    --cv-culture: #a57cd2;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #13171d;
+  --paper-edge: rgba(237, 240, 243, 0.09);
+  --paper-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 24px -18px rgba(0, 0, 0, 0.8);
+  --chart-ink: #86c2e6;
+  --sea-lines: 0.09;
+  --cv-positions: #2e69b2;
+  --cv-education: #00a692;
+  --cv-teaching: #c28621;
+  --cv-service: #d24c50;
+  --cv-culture: #a57cd2;
+}
+
+body {
+  font-feature-settings: "ss01";
+}
+
+/* Running text in the research statement and the lede stays in Newsreader;
+   smaller UI text gets a sans with some character */
+.row__what p,
+.news-card .row__what,
+.feature p,
+.site p,
+.interests p {
+  letter-spacing: -0.003em;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Paper, not pastel                                                */
+/* ------------------------------------------------------------------ */
+
+/* The four soft colour orbs read as a stock gradient. Keep the limestone
+   ground and the grain; let the sea chart become the page's one motif. */
+.field i {
+  display: none;
+}
+
+/* The intro chart gets the accent ink instead of grey, a touch stronger */
+.hero::before {
+  background: var(--chart-ink);
+  opacity: calc(var(--chart) * 1.35);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Glass only on things that float                                  */
+/* ------------------------------------------------------------------ */
+
+/* Cards that sit in the page are paper: an edge, a short shadow, no blur */
+.news-card.glass,
+.feature.glass,
+.site.glass,
+.contact.glass,
+.code.glass {
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 0 0 1px var(--paper-edge), var(--paper-shadow);
+}
+
+.news-card.glass::before,
+.feature.glass::before,
+.site.glass::before,
+.contact.glass::before,
+.code.glass::before,
+.news-card.glass::after,
+.feature.glass::after,
+.site.glass::after,
+.contact.glass::after,
+.code.glass::after {
+  display: none;
+}
+
+.feature,
+.site {
+  border-radius: 18px;
+  transition: box-shadow 0.25s ease, transform 0.4s var(--ease-settle);
+}
+
+.feature:hover,
+.site:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, var(--paper-edge)), var(--paper-shadow);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Details                                                          */
+/* ------------------------------------------------------------------ */
+
+/* Section numbers as a serif numeral in the accent, not a code label */
+.section__num {
+  color: var(--accent);
+  font: italic 400 1.05rem/1 var(--serif);
+  letter-spacing: 0;
+}
+
+/* Fact labels in small capitals rather than lowercase mono */
+.facts dt,
+.toolbox dt {
+  font-family: var(--sans);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  font-size: 0.875rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* 5a. The sprint cycle (Research)                                    */
+/* ------------------------------------------------------------------ */
+
+.sprint {
+  margin: 34px 0 40px;
+  padding: 22px 22px 16px;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--paper-edge), var(--paper-shadow);
+}
+
+.sprint svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* 5a. The sprint cycle (Research), replaces the responsible-sprint styles */
+.cycle text { fill: var(--ink); font: 500 13px var(--sans); }
+.cycle .lab { fill: var(--ink-2); font-weight: 400; }
+.cycle .eyebrow { fill: var(--ink-3); font: 500 10.5px var(--mono); letter-spacing: 0.08em; }
+.cycle .note { fill: var(--accent); font: italic 400 15px var(--serif); }
+.cycle .out { fill: var(--bg-solid); font-weight: 600; }
+.cycle .ln { fill: none; stroke: var(--ink-3); stroke-width: 1.4; }
+.cycle .ln--acc { stroke: var(--accent); }
+.cycle .ln--thick { stroke-width: 2.4; }
+.cycle .ln--dash { stroke-dasharray: 4 5; }
+.cycle .box { fill: var(--bg); stroke: var(--paper-edge); stroke-width: 1; }
+.cycle .box--out { fill: var(--accent); stroke: none; }
+.cycle .gate { fill: var(--paper); stroke: var(--accent); stroke-width: 1.4; }
+.cycle .gate--open { stroke-dasharray: 3 3; }
+.cycle .node { fill: var(--ink-2); }
+.cycle .pip { fill: var(--accent); }
+.cycle .a-track { fill: none; stroke: none; }
+.cycle .a-dot, .cycle .a-dot2, .cycle .a-inc, .cycle .a-held { opacity: 0; }
+.cycle .a-ring { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.cycle .a-x { fill: none; stroke: var(--tint-clay); stroke-width: 2; stroke-linecap: round; opacity: 0; transition: opacity .2s; }
+.cycle .is-fail .a-x { opacity: 1; }
+.cycle .a-gate circle { transition: fill .25s, stroke .25s; }
+.cycle .a-gate.is-on .gate { fill: color-mix(in srgb, var(--accent) 16%, var(--paper)); }
+.cycle .a-gate.is-fail .gate { stroke: var(--tint-clay); fill: color-mix(in srgb, var(--tint-clay) 12%, var(--paper)); }
+.cycle .a-inc rect { fill: var(--ink-3); opacity: 0.28; transition: fill .3s, opacity .3s; }
+.cycle .a-inc rect.is-on { fill: var(--accent); opacity: 1; }
+.cycle .a-held { fill: var(--tint-clay); font: italic 400 15px var(--serif); }
+.cycle .note.is-held { fill: var(--tint-clay); }
+.cycle .leader { fill: none; stroke: var(--ink-3); stroke-width: 0.8; opacity: 0.55; }
+
+/* ------------------------------------------------------------------ */
+/* 5b. HRMS lifecycle strip (Projects)                                 */
+/* ------------------------------------------------------------------ */
+
+.lifecycle {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 18px 0 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.lifecycle li {
+  position: relative;
+  padding-top: 16px;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.lifecycle li::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.lifecycle li:first-child::before { border-radius: 2px 0 0 2px; }
+.lifecycle li:last-child::before { right: 30%; background: linear-gradient(to right, color-mix(in srgb, var(--accent) 30%, transparent), transparent); }
+
+.lifecycle li::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.lifecycle li.is-live::after {
+  background: var(--live);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--live) 18%, transparent);
+}
+
+.lifecycle b {
+  display: block;
+  color: var(--ink);
+  font: 500 0.75rem/1.5 var(--mono);
+}
+
+@media print {
+  .sprint, .career, .lifecycle { display: none !important; }
+}
+
+.lifecycle { margin-bottom: 14px; }
+
+/* ------------------------------------------------------------------ */
+/* Background: 80-column punch cards behind the intro and faintly down */
+/* the right edge, punched in real IBM 029 Hollerith code with the     */
+/* name, the thesis title, the university and the HRMS stack.          */
+/* ------------------------------------------------------------------ */
+
+:root[data-pattern="punch"]   { --pattern: url("../img/pattern-punchcard.svg"); }
+
+:root:not([data-pattern="sea"]) .hero::before {
+  -webkit-mask-image: var(--pattern), radial-gradient(closest-side at 42% 50%, #000 60%, transparent);
+  mask-image: var(--pattern), radial-gradient(closest-side at 42% 50%, #000 60%, transparent);
+  opacity: calc(var(--chart) * 1.6);
+}
+
+:root[data-pattern="punch"] .hero::before { opacity: calc(var(--chart) * 2.1); }
+
+/* The edge strip: the same drawing, very faint, down the right side */
+:root:not([data-pattern="sea"]) .field::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -6vw;
+  width: 46vw;
+  height: 100%;
+  background: var(--chart-ink);
+  opacity: var(--sea-lines);
+  -webkit-mask: var(--pattern) right top / 100% auto repeat-y, linear-gradient(to left, #000 30%, transparent);
+  -webkit-mask-composite: source-in;
+  mask: var(--pattern) right top / 100% auto repeat-y, linear-gradient(to left, #000 30%, transparent);
+  mask-composite: intersect;
+}
+
+/* ------------------------------------------------------------------ */
+/* News as a changelog: a vertical log grouped by year, newest        */
+/* on top, older entries folded behind a button.                       */
+/* ------------------------------------------------------------------ */
+
+.news-more { display: none; }
+
+:root[data-news="log"] .news-nav { display: none; }
+
+:root[data-news="log"] .rows--news {
+  display: block;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+:root[data-news="log"] .rows--news > .news-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px 26px 86px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0;
+  margin: 0;
+  padding: 10px 0 14px;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+:root[data-news="log"] .rows--news > .news-card.is-older { display: none; }
+:root[data-news="log"] .rows--news.is-open > .news-card.is-older { display: grid; }
+
+/* year, set once per year in the left column */
+:root[data-news="log"] .rows--news > .news-card::before {
+  content: attr(data-year);
+  display: block;
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+  width: auto;
+  height: auto;
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+  color: var(--ink);
+  font: 400 1.35rem/1 var(--serif);
+  letter-spacing: -0.01em;
+}
+
+/* the rail */
+:root[data-news="log"] .rows--news > .news-card::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 76px;
+  width: 1px;
+  height: auto;
+  border-radius: 0;
+  opacity: 1;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: none;
+}
+:root[data-news="log"] .rows--news > .news-card:first-child::after { top: 18px; }
+:root[data-news="log"] .rows--news:not(.is-open) > .news-card.is-cut::after,
+:root[data-news="log"] .rows--news > .news-card:last-child::after {
+  bottom: auto;
+  height: 18px;
+}
+
+:root[data-news="log"] .news-card .row__when {
+  grid-column: 3;
+  grid-row: 1;
+  align-self: baseline;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  position: relative;
+  color: var(--ink-3);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* the commit dot, sitting on the rail and centred on its date line
+   (the date column starts 19px right of the dot on desktop and phone) */
+:root[data-news="log"] .news-card .row__when::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: -19px;
+  top: 50%;
+  margin-top: -6.5px; /* centred on the capitals, which sit a touch above the line centre */
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+:root[data-news="log"] .news-card:first-child .row__when::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-wash);
+}
+:root[data-news="log"] .news-card:first-child .row__when {
+  color: var(--accent);
+  background: none;
+}
+
+:root[data-news="log"] .news-card .row__what {
+  grid-column: 4;
+  grid-row: 1;
+  max-width: 58ch;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+:root[data-news="log"] .news-card:first-child .row__what {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  line-height: 1.45;
+}
+
+/* the gap between years gets a little more air */
+:root[data-news="log"] .news-card[data-year]:not(:first-child) { padding-top: 26px; }
+
+:root[data-news="log"] .news-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 0 90px;
+  padding: 0 14px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--hair);
+  color: var(--ink-2);
+  font: 500 0.8125rem/1 var(--sans);
+  cursor: pointer;
+}
+:root[data-news="log"] .news-more:hover { color: var(--ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent); }
+
+@media (max-width: 720px) {
+  :root[data-news="log"] .rows--news > .news-card { grid-template-columns: 26px minmax(0, 1fr); row-gap: 4px; }
+  :root[data-news="log"] .rows--news > .news-card::before { display: none; }
+  :root[data-news="log"] .rows--news > .news-card::after { left: 12px; }
+  :root[data-news="log"] .news-card .row__when { grid-column: 2; grid-row: 1; }
+  :root[data-news="log"] .news-card .row__what { grid-column: 2; grid-row: 2; }
+  :root[data-news="log"] .news-more { margin-left: 26px; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Career map (bars per category) and its tooltip                     */
+/* ------------------------------------------------------------------ */
+
+.career {
+  position: relative;
+  margin: 0 0 48px;
+  padding: 18px 20px 14px;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--paper-edge), var(--paper-shadow);
+}
+
+.career__scroll { overflow-x: auto; scrollbar-width: thin; }
+
+.career__svg {
+  display: block;
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+  overflow: visible;
+}
+
+.career__key {
+  margin: 10px 0 0;
+  color: var(--ink-3);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+/* The lanes are labelled on the map itself, so the legend only shows on
+   phones, where the map scrolls sideways and the labels scroll out of view */
+.career__key { display: none; }
+@media (max-width: 720px) { .career__key { display: block; } }
+.career__legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 0; color: var(--ink-2); }
+.career__legend span { display: inline-flex; align-items: center; gap: 6px; }
+.career__legend span::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--tint); }
+.career .c-grid { stroke: var(--hair); stroke-width: 1; }
+.career .c-year { fill: var(--ink-3); font: 400 11px var(--mono); }
+.career .c-lane { fill: var(--ink); font: 500 12.5px var(--sans); }
+.career .c-swatch { fill: var(--tint); }
+.career .c-now { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; }
+.career .c-nowlabel { fill: var(--accent); font: italic 400 13px var(--serif); }
+.career .c-band { fill: color-mix(in srgb, var(--ink) 3%, transparent); }
+.career .c-item { cursor: pointer; outline: none; }
+.career .c-bar {
+  fill: color-mix(in srgb, var(--tint) 22%, var(--paper));
+  stroke: color-mix(in srgb, var(--tint) 70%, transparent);
+  stroke-width: 1;
+  transition: fill 0.2s ease;
+}
+.career .c-barlabel { fill: var(--ink); font: 500 11px var(--sans); pointer-events: none; }
+.career .c-open { stroke: var(--tint); stroke-width: 2; stroke-dasharray: 2 3; fill: none; }
+.career .c-item.is-hot .c-bar,
+.career .c-item:focus-visible .c-bar { fill: color-mix(in srgb, var(--tint) 45%, var(--paper)); stroke: var(--tint); stroke-width: 2; }
+
+/* tooltip */
+.career__tip {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  display: grid;
+  gap: 2px;
+  max-width: 280px;
+  padding: 10px 12px 11px;
+  border-radius: 12px;
+  background: var(--bg-solid);
+  box-shadow: 0 0 0 1px var(--paper-edge), 0 14px 30px -12px rgba(20, 32, 48, 0.35);
+  pointer-events: none;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.career__tip strong { font-weight: 600; color: var(--ink); font-size: 0.875rem; }
+.career__tip-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-3);
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+}
+.career__tip-cat::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--tint); }
+.career__tip-where { color: var(--ink-2); }
+.career__tip-when { color: var(--ink-3); font: 400 0.75rem/1.5 var(--mono); margin-top: 2px; }
+.career__tip-hint { margin-top: 6px; color: var(--accent); font-size: 0.75rem; }
+/* display: grid above would otherwise override the hidden attribute */
+.career__tip[hidden] { display: none; }
+
+.row.is-hot {
+  background: linear-gradient(to right, color-mix(in srgb, var(--accent) 7%, transparent), transparent 80%);
+}
+
+@media print {
+  .news-more { display: none !important; }
+  .rows--news > .news-card.is-older { display: block !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Punch-card details, each switched on by a word in data-punch:       */
+/*   stub    — a tear-off stub under the "at a glance" card            */
+/*   bands   — the section number and name punched under each title   */
+/*   footer  — a full 80-column card above the footer                  */
+/* All of it is real Hollerith code, drawn by refine.js.               */
+/* ------------------------------------------------------------------ */
+
+.punch-stub, .punch-band, .punch-footer { display: none; }
+.punch-stub svg, .punch-band svg, .punch-footer svg { display: block; overflow: visible; }
+[class*="punch-"] .p-hole { fill: var(--ink-2); }
+[class*="punch-"] .p-digit { fill: var(--ink-3); font: 400 5px var(--mono); opacity: 0.55; }
+[class*="punch-"] .p-print { fill: var(--ink-3); font: 500 7.5px var(--mono); }
+[class*="punch-"] .p-frame { fill: var(--paper); stroke: color-mix(in srgb, var(--ink-3) 55%, transparent); stroke-width: 1; }
+[class*="punch-"] .p-grid { fill: var(--ink-3); opacity: 0.45; }
+
+:root[data-punch~="stub"] .punch-stub {
+  display: block;
+  margin: 20px -26px -26px;
+  padding: 14px 26px 18px;
+  border-top: 1.5px dashed var(--hair);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: color-mix(in srgb, var(--ink) 2.5%, transparent);
+}
+:root[data-punch~="stub"] .punch-stub svg { width: 100%; height: auto; opacity: 0.8; }
+
+:root[data-punch~="bands"] .punch-band { display: block; margin-top: 18px; opacity: 0.7; }
+:root[data-punch~="bands"] .punch-band svg { max-width: 100%; height: auto; }
+
+:root[data-punch~="footer"] .punch-footer {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin: 0;
+  padding: 72px 0 48px;
+  border-top: 1px solid var(--hair);
+}
+.punch-footer__card { opacity: 0.75; width: min(100%, 600px); }
+.punch-footer__card svg { width: 100%; height: auto; }
+.punch-note {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--ink-3);
+  font: italic 400 0.95rem/1.5 var(--serif);
+  text-align: center;
+  text-wrap: balance;
+}
+:root[data-punch~="footer"] .punch-footer .p-hole { fill: var(--ink); }
+:root[data-punch~="footer"] .punch-footer .p-digit { font-size: 6.5px; }
+:root[data-punch~="footer"] .punch-footer .p-print { font-size: 7.2px; }
+
+@media (max-width: 960px) {
+  :root[data-punch~="bands"] .punch-band { display: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* CV listing as a git graph (data-cvlist="git"): every category is a  */
+/* coloured branch, every entry a commit on it, and all branches merge */
+/* at the top into JT. Ongoing entries are filled; past ones are rings.*/
+/* ------------------------------------------------------------------ */
+
+:root[data-cvlist="git"] #cv .section__body { position: relative; }
+:root[data-cvlist="git"] #cv .section__body > :not(.career):not(.cvgit) { margin-left: var(--gut, 0px); }
+:root[data-cvlist="git"] #cv .career + .cv-head,
+:root[data-cvlist="git"] #cv .cv-head:first-child { margin-top: 96px; }
+
+.cvgit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.cvgit .cg-pass { fill: none; stroke: var(--tint); stroke-width: 1.6; opacity: 0.32; }
+.cvgit .cg-line { fill: none; stroke: var(--tint); stroke-width: 2.6; stroke-linecap: round; }
+.cvgit .cg-label { fill: var(--tint); }
+.cvgit .cg-dot { fill: var(--paper); stroke: var(--tint); stroke-width: 2.2; transition: r 0.15s ease; }
+.cvgit .cg-dot.is-open { fill: var(--tint); stroke: var(--paper); stroke-width: 2; }
+.cvgit .cg-halo { fill: none; stroke: var(--tint); stroke-width: 1; opacity: 0.4; }
+.cvgit .cg-dot.is-hot { r: 6.5; }
+.cvgit .cg-jt circle { fill: var(--ink); }
+.cvgit .cg-jt text { fill: var(--bg-solid); font: 500 13px var(--serif); letter-spacing: 0.02em; }
+.cvgit .cg-headlabel { fill: var(--ink-3); font: 500 11px var(--mono); letter-spacing: 0.02em; }
+.cv-head__branch { color: var(--ink-3); font-style: italic; font-weight: 400; white-space: nowrap; }
+:root:not([data-cvlist="git"]) .cv-head__branch { display: none; }
+
+@media print {
+  :root:root:root { --paper: #fff; }
+  :root {
+    --cv-positions: #1f5aa0;
+    --cv-education: #169c8c;
+    --cv-teaching: #b87a00;
+    --cv-service: #c4364a;
+    --cv-culture: #a86ad0;
+  }
+  .punch-stub, .cvgit, .cv-head__branch { display: none !important; }
+  /* The punch cards under the section titles and the card at the end do print */
+  :root[data-punch~="bands"] .punch-band { display: block !important; margin-top: 6pt; opacity: 1; }
+  :root[data-punch~="bands"] .punch-band svg { max-width: 100%; height: auto; }
+  :root[data-punch~="footer"] .punch-footer { display: grid !important; gap: 6pt; padding-top: 16pt; break-inside: avoid; }
+  .punch-footer__card { opacity: 1; width: 150mm; }
+  /* The map and the branches are left out, so drop the room they kept */
+  :root[data-cvlist="git"] #cv .section__body > :not(.career):not(.cvgit) { margin-left: 0; }
+  :root[data-cvlist="git"] #cv .career + .cv-head,
+  :root[data-cvlist="git"] #cv .cv-head:first-child { margin-top: 0; }
+  /* Project cards print as plain columns: a straight rule on top, no halo on the status dot */
+  .feature, .site { border-radius: 0 !important; transform: none !important; }
+  /* backgrounds don't print by default, so the dot is drawn with a shadow */
+  .status::before { background: none; box-shadow: inset 0 0 0 4px currentColor; }
+  .status--dev::before { box-shadow: inset 0 0 0 1.5px currentColor; }
+  .coursework { gap: 2pt; font-size: 9pt; line-height: 1.45; }
+}
+
+/* A project that is not live yet: muted text and a hollow dot */
+.status--dev { color: var(--ink-3); }
+.status--dev::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+
+/* HRMS project: the initials spell out the acronym */
+.initials b { font-weight: 700; font-size: 1.18em; line-height: 1; color: var(--ink); }
+
+/* The page colour lives on <html>; keep <body> clear so nothing that wraps
+   the page (like a preview frame) can paint a light background over it */
+body { background: transparent; }
+
+/* ------------------------------------------------------------------ */
+/* The card from the email signature, decoded: shown above the intro   */
+/* only to visitors who clicked it (?ref=sig-photo), see refine.js     */
+/* ------------------------------------------------------------------ */
+
+.sigcard {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  grid-template-areas: "card text" "card read";
+  gap: 0 40px;
+  align-items: center;
+  margin: 104px 0 0;
+  padding: 22px 56px 22px 26px;
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--paper-edge), var(--paper-shadow);
+}
+
+/* The intro no longer fills the first screen, so the card and the name show together */
+.sigcard + .hero { min-height: 0; padding-top: 56px; }
+
+.sigcard__card { grid-area: card; border-radius: 6px; outline-offset: 6px; }
+.sigcard__text { grid-area: text; align-self: end; }
+.sigcard__kicker { margin: 0 0 8px; color: var(--ink-3); font: 500 0.6875rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.sigcard__text p:not(.sigcard__kicker) { margin: 0; color: var(--ink-2); font-size: 0.9375rem; line-height: 1.5; }
+.sigcard__read { grid-area: read; align-self: start; min-height: 3em; margin: 10px 0 0; color: var(--ink-3); font: 400 0.8125rem/1.5 var(--mono); }
+.sigcard__read b { color: var(--accent); font-weight: 500; }
+
+.sigcard__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.sigcard__close:hover { background: var(--accent-wash); color: var(--ink); }
+.sigcard__close svg { width: 14px; height: 14px; }
+
+.sigcard svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sigcard .k-hit { fill: transparent; }
+.sigcard .k-hole { fill: var(--ink); transition: fill 0.15s; }
+.sigcard .k-dot { fill: var(--ink-3); opacity: 0.35; }
+.sigcard .k-print { fill: var(--ink-2); font: 500 11px var(--mono); transition: fill 0.15s; }
+.sigcard .k-rowname { fill: var(--ink-3); font: 400 8.5px var(--mono); }
+.sigcard .k-col { cursor: pointer; }
+.sigcard .k-col.is-on .k-hit { fill: var(--accent-wash); }
+.sigcard .k-col.is-on .k-hole,
+.sigcard .k-col.is-on .k-print { fill: var(--accent); }
+
+/* On phones: the words first, then the card at about 10px a column, with larger letters */
+@media (max-width: 760px) {
+  .sigcard { grid-template-columns: 1fr; grid-template-areas: "text" "card" "read"; gap: 16px; margin-top: 88px; padding: 18px 16px 16px; }
+  .sigcard__text { padding-right: 32px; }
+  .sigcard__read { min-height: 0; margin: 0; }
+  .sigcard .k-print { font-size: 19px; }
+  .sigcard .k-rowname { font-size: 13px; }
+}
+
+@media print {
+  .sigcard { display: none !important; }
+  .sigcard + .hero { padding-top: 0; }
+}
