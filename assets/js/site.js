@@ -1,5 +1,5 @@
 /*
-  jtsoukalas.github.io
+  jtsoukalas.gr
   Small, dependency-free behaviour: appearance toggle, email, copy buttons,
   the sliding section lens, and the pointer highlight on glass.
 */

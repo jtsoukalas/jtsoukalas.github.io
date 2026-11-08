@@ -738,3 +738,9 @@ body { background: transparent; }
   .sigcard { display: none !important; }
   .sigcard + .hero { padding-top: 0; }
 }
+
+/* Two email addresses in the contact card, each with a short label above it */
+.email__label { margin: 0 0 6px; color: var(--ink-3); font: 500 0.75rem/1.2 var(--mono); letter-spacing: 0.02em; }
+.email + .email__label { margin-top: 22px; }
+.contact .email a { font-size: clamp(1.4rem, 2.3vw, 1.75rem); }
+@media print { .contact .email a { font-size: 12pt; } .email__label { margin: 0; font-size: 8pt; } .email + .email__label { margin-top: 4pt; } }
